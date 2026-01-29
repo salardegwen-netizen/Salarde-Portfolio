@@ -65,8 +65,8 @@ export function Contact() {
       });
     } catch (error: any) {
       console.error("EmailJS error:", error);
-      console.error("Error status:", error?.status);
-      console.error("Error text:", error?.text);
+      if (error?.status) console.error("Error status:", error.status);
+      if (error?.text) console.error("Error text:", error.text);
       toast.error("Failed to send email. Please try again.");
     } finally {
       setIsLoading(false);
