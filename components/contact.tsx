@@ -12,11 +12,10 @@ export function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
     message: "",
   });
 
-  // Initialize EmailJS on component mount
+  // Initialize EmailJS
   useEffect(() => {
     const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
     if (publicKey) {
@@ -41,13 +40,11 @@ export function Contact() {
     try {
       const templateParams = {
         to_email: "salardegwen@gmail.com",
-        user_name: formData.name,
-        user_email: formData.email,
-        subject: formData.subject,
+        name: formData.name,
+        email: formData.email,
         message: formData.message,
+        time: new Date().toLocaleString(),
       };
-
-      console.log("Sending with params:", templateParams);
 
       const response = await emailjs.send(
         "service_un17ofe",
@@ -55,19 +52,17 @@ export function Contact() {
         templateParams
       );
 
-      console.log("Email sent successfully:", response);
-      toast.success("Email sent successfully!");
+      console.log("Email sent:", response);
+      toast.success("Message sent successfully!");
+
       setFormData({
         name: "",
         email: "",
-        subject: "",
         message: "",
       });
     } catch (error: any) {
       console.error("EmailJS error:", error);
-      if (error?.status) console.error("Error status:", error.status);
-      if (error?.text) console.error("Error text:", error.text);
-      toast.error("Failed to send email. Please try again.");
+      toast.error("Failed to send message. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -75,14 +70,18 @@ export function Contact() {
 
   return (
     <section id="contact" className="py-24 text-center max-w-2xl mx-auto px-4">
-      <p className="text-primary font-mono text-sm mb-4">03. What&apos;s Next?</p>
+      <p className="text-primary font-mono text-sm mb-4">
+        03. What&apos;s Next?
+      </p>
+
       <h2 className="text-4xl sm:text-5xl font-bold text-slate-200 mb-6">
         Get In Touch
       </h2>
+
       <p className="text-muted-foreground leading-relaxed mb-12">
         I&apos;m currently looking for new opportunities and my inbox is always
-        open. Whether you have a question, want to collaborate on a project, or
-        just want to say hi, I&apos;ll do my best to get back to you!
+        open. Whether you have a question, want to collaborate, or just want to
+        say hi, I&apos;ll do my best to get back to you!
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4 text-left">
@@ -117,31 +116,16 @@ export function Contact() {
         </div>
 
         <div>
-          <label htmlFor="subject" className="block text-sm font-medium mb-2">
-            Subject
-          </label>
-          <Input
-            id="subject"
-            name="subject"
-            type="text"
-            value={formData.subject}
-            onChange={handleChange}
-            placeholder="Message subject"
-            required
-          />
-        </div>
-
-        <div>
           <label htmlFor="message" className="block text-sm font-medium mb-2">
             Message
           </label>
           <Textarea
             id="message"
             name="message"
+            rows={5}
             value={formData.message}
             onChange={handleChange}
             placeholder="Your message..."
-            rows={5}
             required
           />
         </div>
